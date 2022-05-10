@@ -1,6 +1,11 @@
+// CRUD: CREATE, READ, UPDATE, and DELETE. Are basic operations that can be performed on database applications
+// REST: Representational State Transfer. is a popular architectural style for software, especially web APIs.
+//      It’s defined by five design constraints that, when followed, produce an application with specific properties,
+//      including performance, simplicity, and reliability.
 package com.codeup.fortran_movies_api.web;
 
-import data.Movie;
+import com.codeup.fortran_movies_api.data.Movie;
+import com.codeup.fortran_movies_api.data.MovieRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,6 +27,8 @@ import java.util.List;
 //!!! 🧐 Serialization/Deserialization in Spring Using Spring, we do not need to convert objects to and from JSON with another dependency.
 public class MoviesController {
 
+    private final MovieRepository movieRepository;
+
     private List<Movie> sampleMovies = setMovies();
 
     //    @GetMapping // is called a *composed annotation*. Meaning, its behaviors are composed of the actions of other annotations.
@@ -38,10 +45,10 @@ public class MoviesController {
         return sampleMovies;
     }
 
-    @GetMapping
-    public Movie one() {
-        return sampleMovies.get(1);
-    }
+//    @GetMapping was just used for testing the API when first building
+//    public Movie one() {
+//        return sampleMovies.get(1);
+//    }
 
     @GetMapping("{id}") // Define the path variable to use here
     public Movie getById(@PathVariable int id) { // Actually use the path variable here by annotating a parameter with @PathVariable
@@ -52,13 +59,18 @@ public class MoviesController {
                 .orElse(null); // prevent errors by returning null... not the greatest practice, but it'll do for now
     }
 
+    public MoviesController(MovieRepository movieRepository) {
+        this.movieRepository = movieRepository;
+    }
+
     @PostMapping
     public void create(@RequestBody Movie movie){
         // add one movie to our movies list (fake db)
-        sampleMovies.add(movie);
+        movieRepository.save(movie);
     }
 
-    @PostMapping("all")
+    @PostMapping("all") // /api/movies/all
+    // must add @RequestBody in order for the createAll method to actually get the list of movies
     public void createAll(@RequestBody List<Movie> moviesToAdd) {
         sampleMovies.addAll(moviesToAdd);
     }
