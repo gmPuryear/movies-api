@@ -1,21 +1,34 @@
 package com.codeup.fortran_movies_api.data;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Table(name="movies")
+@Table(name = "movies")
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String title;
     private String year;
-//    private String director;
+    @ManyToOne
+    private Director director; // from movies side we have a many to one relationship because you can have one
+    // director with many movies. ** Also, this director is reflective of the director_id foreign key
 //    private String actors;
-//    private String imdbId;
+//    private String Poster;
 //    private String genre;
     private String plot;
+    private String poster;
+    private String rating;
+//    ----- Creating many to many relationship -----
+    @ManyToMany(mappedBy = "movies")
+//    ---- Tells searializer to ignore certain properties so for this is Movies, because we only want genre info-----
+    @JsonIgnoreProperties("movies")
+    private List<Genre> genres;
 
-    public Movie(int id, String title, String year, String director, String actors, String imdbId, String genre, String plot) {
+    public Movie(int id, String title, String year, String director, String actors, String imdbId, String genre, String plot, String poster, String rating) {
         this.id = id;
         this.title = title;
         this.year = year;
@@ -24,9 +37,12 @@ public class Movie {
 //        this.imdbId = imdbId;
 //        this.genre = genre;
         this.plot = plot;
+        this.poster = poster;
+        this.rating = rating;
     }
 
     public Movie() {
+        // empty constructor
     }
 
     public int getId() {
@@ -53,37 +69,29 @@ public class Movie {
         this.year = year;
     }
 
-//    public String getDirector() {
-//        return director;
-//    }
+    public Director getDirector() {
+        return director;
+    }
 
-//    public void setDirector(String director) {
-//        this.director = director;
-//    }
+    public void setDirector(Director director) {
+        this.director = director;
+    }
 
-//    public String getActors() {
-//        return actors;
-//    }
+    public String getPoster() {
+        return poster;
+    }
 
-//    public void setActors(String actors) {
-//        this.actors = actors;
-//    }
+    public void setPoster(String poster) {
+        this.poster = poster;
+    }
 
-//    public String getImdbId() {
-//        return imdbId;
-//    }
+    public String getRating() {
+        return rating;
+    }
 
-//    public void setImdbId(String imdbId) {
-//        this.imdbId = imdbId;
-//    }
-
-//    public String getGenre() {
-//        return genre;
-//    }
-
-//    public void setGenre(String genre) {
-//        this.genre = genre;
-//    }
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
 
     public String getPlot() {
         return plot;
@@ -93,17 +101,24 @@ public class Movie {
         this.plot = plot;
     }
 
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", year='" + year + '\'' +
-//                ", director='" + director + '\'' +
-//                ", actors='" + actors + '\'' +
-//                ", imdbId='" + imdbId + '\'' +
-//                ", genre='" + genre + '\'' +
+                ", director=" + director.getName() +
                 ", plot='" + plot + '\'' +
+                ", poster='" + poster + '\'' +
+                ", rating='" + rating + '\'' +
                 '}';
     }
 }
