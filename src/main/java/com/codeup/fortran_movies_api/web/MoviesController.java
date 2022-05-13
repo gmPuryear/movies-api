@@ -4,10 +4,7 @@
 //      including performance, simplicity, and reliability.
 package com.codeup.fortran_movies_api.web;
 
-import com.codeup.fortran_movies_api.data.Director;
-import com.codeup.fortran_movies_api.data.DirectorsRepository;
-import com.codeup.fortran_movies_api.data.Movie;
-import com.codeup.fortran_movies_api.data.MovieRepository;
+import com.codeup.fortran_movies_api.data.*;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 
-@CrossOrigin //this is to help with local dev testing
+@CrossOrigin //this is to help with local dev testing... And trying to get info from another URL
 @RestController
 //registers the class with Spring's Dependency Injector (more on that later) and is handled in particular ways.
 //  Among those ways is the elimination of a need to annotate every controller method with @ResponseBody.
@@ -31,37 +28,24 @@ import java.util.List;
 //and DELETE requests on api/movies/{id} go to @DeleteMapping("{id}").
 //!!! 🧐 Serialization/Deserialization in Spring Using Spring, we do not need to convert objects to and from JSON with another dependency.
 public class MoviesController {
-
     private final MovieRepository movieRepository;
     private final DirectorsRepository directorsRepository;
+    private final ActorRepository actorRepository;
 
-    public MoviesController(MovieRepository movieRepository, DirectorsRepository directorsRepository) {
+    public MoviesController(MovieRepository movieRepository, DirectorsRepository directorsRepository, ActorRepository actorRepository) {
         this.movieRepository = movieRepository;
         this.directorsRepository = directorsRepository;
+        this.actorRepository = actorRepository;
     }
 
-//    private List<Movie> sampleMovies = setMovies();
-
-    //    @GetMapping // is called a *composed annotation*. Meaning, its behaviors are composed of the actions of other annotations.
-//      `@GetMapping` acts as a shortcut for`@RequestMapping(method = RequestMethod.GET)`.
-//       To use it, simply place @GetMapping over your desired REST controller method:
-//    @GetMapping
-//    private List<Movie> getAll() {
-//        ...
-//    }
 //    From this point, any valid GET request sent to /api/movies will be routed to getAll().
     // when typed in correct URL it will download all movies
     // TODO: put the expected path out to the side of the method annotation
     //  -> this helps to keep track so we don't have to guess if methods conflict on the same path
     @GetMapping("all") // /api/movies/all
     public List<Movie> getAll() {
-        return movieRepository.findAll();
+        return movieRepository.findAll(); //findAll() will return a list of objects and is provided by the JpaRepository
     }
-
-//    @GetMapping was just used for testing the API when first building
-//    public Movie one() {
-//        return sampleMovies.get(1);
-//    }
 
     @GetMapping("{id}") // Define the path variable to use here
     public Movie getById(@PathVariable int id) { // Actually use the path variable here by annotating a parameter with @PathVariable
@@ -87,12 +71,10 @@ public class MoviesController {
         return directorsRepository.findByName(directorName);
     }
 
-//                    return movie.getId() == id; // filter out non-matching movie
-//                .findFirst() // isolate to first match
-//                .orElse(null); // prevent errors by returning null... not the greatest practice, but it'll do for now
-
-
-
+    @GetMapping("search/actor")
+    public List<Actor> findByName(@RequestParam("name") String actorName) {
+        return actorRepository.findByName(actorName);
+    }
 
     @PostMapping
     public void create(@RequestBody Movie movie) {
@@ -116,42 +98,5 @@ public class MoviesController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No Matching movie with ID " + id);
         }
     }
-
-
-//    private List<Movie> setMovies() {
-//        List<Movie> movies = new ArrayList<>();
-//        movies.add(new Movie(
-//                1,
-//                "The Matrix",
-//                "1999",
-//                "Lana Wachowski",
-//                "Keanu Reeves",
-//                "https://www.imdb.com/title/tt0133093/",
-//                "Action",
-//                "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence."
-//        ));
-//        movies.add(new Movie(
-//                2,
-//                "A New Hope",
-//                "1980",
-//                "Lana Wachowski",
-//                "Keanu Reeves",
-//                "https://www.imdb.com/title/tt0076759/",
-//                "Action",
-//                "When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth--the life he knows is the elaborate deception of an evil cyber-intelligence."
-//        ));
-//        movies.add(new Movie(
-//                3,
-//                "snatch",
-//                "Guy Ritchie",
-//                "2000",
-//                "Brad Pitt",
-//                "https://www.imdb.com/title/tt0208092/",
-//                "action",
-//                "Unscrupulous boxing promoters, violent bookmakers, a Russian gangster, incompetent amateur robbers and supposedly Jewish jewelers fight to track down a priceless stolen diamond."
-//        ));
-//        return movies;
-//    }
-
 
 }

@@ -15,8 +15,8 @@ public class Director {
     private int id;
     private String name;
 
-    @OneToMany(mappedBy = "director")
-
+    @OneToMany(mappedBy = "director") // 1 director can be associated with many movies
+    // mappedBy indicates which field on the Movie POJO links the Director and Movie together
     @JsonIgnoreProperties("director")
     private List<Movie> directedMovies; // adding a private list of type movie named directedMovies
 

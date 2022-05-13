@@ -12,6 +12,6 @@ public interface MovieRepository extends JpaRepository<Movie, Integer> {
 
 //    // TODO: If your query gets more complex, you could use the @Query annotation!
     @Query(nativeQuery = true, // nativeQuery = true indicates that you want to write raw SQL
-            value = "SELECT * FROM movie m WHERE m.year >= ? AND m.year <= ?;") // question marks (?) indicate that Spring should draw the actual value from your method parameters
+            value = "SELECT * FROM movies_db.movies m WHERE m.year >= ? AND m.year <= ?;") // question marks (?) indicate that Spring should draw the actual value from your method parameters
     List<Movie> findByYearRange(Integer startYear, Integer endYear); // Order matters!
 }

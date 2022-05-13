@@ -22,9 +22,9 @@ public class Genre {
     //      This will ensuer hibernate wont do weird stuff
     @JoinTable(name = "movie_genre",
             joinColumns =
-                    @JoinColumn(name = "genre_id", referencedColumnName = "id"),
+                    @JoinColumn(name = "genre_id"), // the movie_genre genre_id column is a foreign key referencing movies (id) (think that it's just like our FOREIGN KEY SQL statement)
             inverseJoinColumns =
-                    @JoinColumn(name = "movie_id", referencedColumnName = "id")
+                    @JoinColumn(name = "movie_id") // the movie_id is a foreign key referencing movies (id)
     )
 
 
@@ -43,7 +43,6 @@ public class Genre {
 
 //    ----- Getters & Setters -----
 
-
     public int getId() {
         return id;
     }
@@ -58,6 +57,11 @@ public class Genre {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+//    DON'T FORGET YOUR GETTER! Or else, the list of movies won't serialize
+    public List<Movie> getMovies() {
+        return movies;
     }
 
     @Override

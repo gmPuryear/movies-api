@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface ActorRepository extends JpaRepository <Actor, Integer>  {
 
-    List<Actor> findByActor(String name);
+    List<Actor> findByName(String name);
 
 }

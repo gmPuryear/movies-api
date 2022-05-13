@@ -11,12 +11,10 @@ USE movies_db;
 #
 #
 # # 5. drop the table(s) to which no other tables are dependent (none at first)
-# DROP TABLE IF EXISTS movie_genre;
-# DROP TABLE IF EXISTS movies_actor;
-# DROP TABLE IF EXISTS actors;
-# DROP TABLE IF EXISTS genres;
 DROP TABLE IF EXISTS movies;
 DROP TABLE IF EXISTS directors;
+
+
 #
 # # 6. map the json movie properties to movies table columns
 # # --> start with just a movies table with all the columns found in the movie json properties
@@ -73,7 +71,7 @@ describe movie_genre;
 create table if not exists actors
 (
     id   int unsigned not null auto_increment primary key,
-    name varchar(255)
+    actor varchar(255)
 );
 
 describe actors;
@@ -144,6 +142,7 @@ INSERT INTO movie_actor (movie_id, actor_id)
 VALUES (2, 5),
        (2, 6),
        (2, 4),
+       (5, 4),
        (3, 7),
        (3, 8),
        (3, 9),
@@ -154,29 +153,3 @@ VALUES (2, 5),
        (5, 11);
 
 
-
-# CREATE TABLE IF NOT EXISTS actors(
-#                                      id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#                                      name VARCHAR(255),
-#                                      PRIMARY KEY (id)
-# );
-#
-# CREATE TABLE IF NOT EXISTS movies_actor(
-#                                            movie_id INT UNSIGNED NOT NULL,
-#                                            actor_id INT UNSIGNED NOT NULL,
-#                                            FOREIGN KEY (movie_id) REFERENCES movies(id),
-#                                            FOREIGN KEY (actor_id) REFERENCES actors(id)
-# );
-
-# CREATE DATABASE IF NOT EXISTS movies_db;
-#
-# USE movies_db;
-#
-# CREATE TABLE IF NOT EXISTS movies
-# (
-#     id    INT UNSIGNED NOT NULL AUTO_INCREMENT,
-#     title VARCHAR(255) NOT NULL,
-#     year  CHAR(4)      NOT NULL,
-#     plot  TEXT,
-#     PRIMARY KEY (id)
-# );

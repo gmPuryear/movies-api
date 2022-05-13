@@ -13,36 +13,40 @@ public class Movie {
     private int id;
     private String title;
     private String year;
-    @ManyToOne
+    private String plot;
+    private String poster;
+    private String rating;
+
+    @ManyToOne // Many movies have the same director
+    @JsonIgnoreProperties("directedMovies")
     private Director director; // from movies side we have a many to one relationship because you can have one
     // director with many movies. ** Also, this director is reflective of the director_id foreign key
 //    private String actors;
 //    private String Poster;
 //    private String genre;
-    private String plot;
-    private String poster;
-    private String rating;
-//    ----- Creating many to many relationship -----
+
+    //    ----- Creating many to many relationship for genres-----
     @ManyToMany(mappedBy = "movies")
-//    ---- Tells searializer to ignore certain properties so for this is Movies, because we only want genre info-----
+//  keeps Jackson from making a list of genres with a list of movies with a list of genres with a list of movies...
     @JsonIgnoreProperties("movies")
     private List<Genre> genres;
+
+    //    ----- ManyToMany for actors -----
+    @ManyToMany(mappedBy = "movies")
+    @JsonIgnoreProperties("movies")
+    private List<Actor> actors;
 
     public Movie(int id, String title, String year, String director, String actors, String imdbId, String genre, String plot, String poster, String rating) {
         this.id = id;
         this.title = title;
         this.year = year;
-//        this.director = director;
-//        this.actors = actors;
-//        this.imdbId = imdbId;
-//        this.genre = genre;
         this.plot = plot;
         this.poster = poster;
         this.rating = rating;
     }
 
-    public Movie() {
-        // empty constructor
+    public Movie() { // empty constructor
+
     }
 
     public int getId() {
@@ -101,12 +105,21 @@ public class Movie {
         this.plot = plot;
     }
 
+    // genre getter
     public List<Genre> getGenres() {
         return genres;
     }
-
+    // genre setter
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
+    }
+    // actor getter
+    public List<Actor> getActors() {
+        return actors;
+    }
+    // actor setter
+    public void setActors(List<Actor> actors) {
+        this.actors = actors;
     }
 
     @Override
