@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin //this is to help with local dev testing... And trying to get info from another URL
 @RestController
@@ -38,14 +39,36 @@ public class MoviesController {
         this.actorRepository = actorRepository;
     }
 
-//    From this point, any valid GET request sent to /api/movies will be routed to getAll().
+
+    //    From this point, any valid GET request sent to /api/movies will be routed to getAll().
     // when typed in correct URL it will download all movies
     // TODO: put the expected path out to the side of the method annotation
     //  -> this helps to keep track so we don't have to guess if methods conflict on the same path
     @GetMapping("all") // /api/movies/all
-    public List<Movie> getAll() {
-        return movieRepository.findAll(); //findAll() will return a list of objects and is provided by the JpaRepository
+    public List<MovieDTO> getAll() {
+        List<Movie> movieEntities = movieRepository.findAll(); // TODO: findAll() will return a list of objects and is provided by the JpaRepository
+        List<MovieDTO> movieDTOs = new ArrayList<>();
+        for (Movie movie : movieEntities) {
+            movieDTOs.add(new MovieDTO(
+                    movie.getId(),
+                    movie.getTitle(),
+                    movie.getActors()
+                            .stream()
+                            .map(Actor::getName)
+                            .collect(Collectors.joining(", ")),
+                    movie.getDirector().getName(),
+                    movie.getGenres()
+                            .stream()
+                            .map(Genre::getName)
+                            .collect(Collectors.joining(", ")),
+                    movie.getYear(),
+                    movie.getPoster(),
+                    movie.getRating(),
+                    movie.getPlot()));
+        }
+        return movieDTOs;
     }
+
 
     @GetMapping("{id}") // Define the path variable to use here
     public Movie getById(@PathVariable int id) { // Actually use the path variable here by annotating a parameter with @PathVariable
@@ -59,7 +82,7 @@ public class MoviesController {
     }
 
     @GetMapping("search/year") // api/movies/search/year
-    public List<Movie> searchByYearRange (@RequestParam("startYear") int startYear, @RequestParam("endYear") int endYear) {
+    public List<Movie> searchByYearRange(@RequestParam("startYear") int startYear, @RequestParam("endYear") int endYear) {
         // requestParam is for multiple things to GET
         // TODO: @RequestParam expects a query parameter in the request URL
         //  to have a param matching what is in the annotation (ie: @RequestParam("startYear"))
@@ -76,18 +99,63 @@ public class MoviesController {
         return actorRepository.findByName(actorName);
     }
 
-    @PostMapping
-    public void create(@RequestBody Movie movie) {
-        // add one movie to our movies list (fake db)
-        movieRepository.save(movie);
+    @PostMapping // /api/movies
+    public void create(@RequestBody MovieDTO movieDTO) {
+        System.out.println(movieDTO.getTitle());
+        System.out.println(movieDTO.getPlot());
+        System.out.println(movieDTO.getYear());
+        System.out.println(movieDTO.getPoster());
+        System.out.println(movieDTO.getRating());
+        // first we need a movie to add
+        Movie movieToAdd = new Movie(
+                movieDTO.getTitle(),
+                movieDTO.getYear(),
+                movieDTO.getPlot(),
+                movieDTO.getPoster(),
+                movieDTO.getRating()
+        );
+//        ----- Adding director to movie and director tables if if does not exist then saves the whole movie -----
+        List<Director> director = directorsRepository.findByName(movieDTO.getDirector());
+        System.out.println(director);
+        // If this director does not exist in the repository, add it
+        if (director.isEmpty()) {
+            Director directorToAdd = new Director(movieDTO.getDirector());
+            movieToAdd.setDirector(directorsRepository.save(directorToAdd));
+            System.out.println(directorToAdd + " will be added to database");
+        } else {
+            movieToAdd.setDirector(director.get(0));
+        }
+
+        System.out.println(movieDTO.getGenre());
+        // CREATE NEW STRING ARRAY TO INPUT EACH GENRE IN THE ARRAY AS STRING
+        String genreArr[] = movieDTO.getGenre().split(", ");
+        // CREATE NEW ARRAY LIST TO ADD GENRES
+        List<String> genreToAddList = new ArrayList<>();
+        for (String genre : genreArr) {
+            Genre genreObject = GenresRepository.f
+        }
+//        for (String genre : genreArr) {
+//            if (genre.ge)
+//            genreToAddList.add(genre);
+//        }
+
+
+
+        movieRepository.save(movieToAdd);
     }
 
-    @PostMapping("all") // /api/movies/all
-    // must add @RequestBody in order for the createAll method to actually get the list of movies
-    public void createAll(@RequestBody List<Movie> moviesToAdd) {
-        movieRepository.saveAll(moviesToAdd);
-    }
 
+//    @PostMapping
+//    public void create(@RequestBody Movie movie) {
+//        // add one movie to our movies list (fake db)
+//        movieRepository.save(movie);
+//    }
+//
+//    @PostMapping("all") // /api/movies/all
+//    // must add @RequestBody in order for the createAll method to actually get the list of movies
+//    public void createAll(@RequestBody List<Movie> moviesToAdd) {
+//        movieRepository.saveAll(moviesToAdd);
+//    }
 
 
     @DeleteMapping("{id}") // api

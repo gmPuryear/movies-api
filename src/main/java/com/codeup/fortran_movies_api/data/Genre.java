@@ -37,8 +37,8 @@ public class Genre {
         this.name = name;
     }
 
-    public Genre() {
-
+    public Genre(String name) {
+        this.name = name;
     }
 
 //    ----- Getters & Setters -----

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
+@Entity // tells jpa that this sis teh thing that needs to be saved to the database
+// So here we are making a Movie table with the properties of Movie class as table columns
+// Each INSTANCE of the class should be a ROW in the table.
 @Table(name = "movies")
 public class Movie {
     @Id
@@ -38,6 +40,15 @@ public class Movie {
 
     public Movie(int id, String title, String year, String director, String actors, String imdbId, String genre, String plot, String poster, String rating) {
         this.id = id;
+        this.title = title;
+        this.year = year;
+        this.plot = plot;
+        this.poster = poster;
+        this.rating = rating;
+    }
+
+    public Movie(String title, String year, String plot, String poster, String rating) {
+//        this.id = id; Do not need ID, because it will be created by database
         this.title = title;
         this.year = year;
         this.plot = plot;

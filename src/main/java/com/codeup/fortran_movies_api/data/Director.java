@@ -32,7 +32,12 @@ public class Director {
 
     }
 
-//    ----- Getters & Setters -----
+//  ----- Constructor for creating new director object when checking if user inputted director exists in database(function in moviesController)
+    public Director(String name) {
+        this.name = name;
+    }
+
+    //    ----- Getters & Setters -----
     public int getId() {
         return id;
     }
