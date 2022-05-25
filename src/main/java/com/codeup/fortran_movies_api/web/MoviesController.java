@@ -131,9 +131,9 @@ public class MoviesController {
         String genreArr[] = movieDTO.getGenre().split(", ");
         // CREATE NEW ARRAY LIST TO ADD GENRES
         List<String> genreToAddList = new ArrayList<>();
-        for (String genre : genreArr) {
-            Genre genreObject = GenresRepository.f
-        }
+//        for (String genre : genreArr) {
+//            Genre genreObject = GenresRepository.f
+//        }
 //        for (String genre : genreArr) {
 //            if (genre.ge)
 //            genreToAddList.add(genre);
